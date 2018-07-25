@@ -32,7 +32,7 @@ The main challenge would be the building of the UI
 11.		return to step 2
 12.	else
 13.		report failure 
-14.		return to step 3
+14.		return to step 2
 15. There should be a timer and user should finished the task in time. 
 ```
 * Expected input
