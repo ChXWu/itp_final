@@ -17,11 +17,12 @@ are aligned in a line.
 The main challenge would be the building of the UI
 
 * Pseudocode
+```
 1. Based on user input, generate a randomalized game board
 2. When user click on first jewel, highlight it.
 3. If the user did not click on jewels surrunding the first one, 
 	show warning and restart from 2
-4. Else tried to replace the first and second jewels, decide whether it is a succesful move 
+4. Else try to replace the first jewel with the second, decide whether it is a succesful move 
 5.	if it is
 6.		replace them, 
 7.		eliminate aligned jewel, 
@@ -33,7 +34,7 @@ The main challenge would be the building of the UI
 13.		report failure 
 14.		return to step 3
 15. There should be a timer and user should finished the task in time. 
-
+```
 * Expected input
 Dimensions of the canvas. （Or difficulties ）
 * Expected output
