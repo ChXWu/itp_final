@@ -36,7 +36,9 @@ The main challenge would be the building of the UI
 15. There should be a timer and user should finished the task in time. 
 ```
 * Expected input
+
 Dimensions of the canvas. （Or difficulties ）
+
 * Expected output
 
-
+player's happy
