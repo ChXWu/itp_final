@@ -15,6 +15,7 @@ It is a game where you try to eliminate the jewels by switching two adjecent jew
 are aligned in a line. 
 
 * Core idea: 
+
 The main challenge would be the building of the UI
 
 * Pseudocode
