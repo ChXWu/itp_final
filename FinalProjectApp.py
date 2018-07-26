@@ -22,18 +22,23 @@ Config.write()
 class MainLayout(BoxLayout):
     play_label_title = Label(text = 'Eliminates the Jewels',size_hint_y = .1,font_size='25sp')
     # layout for the result section
-    play_layout_result = BoxLayout(orientation = 'horizontal',size_hint_y = .05)
-    play_layout_btn =  BoxLayout(orientation = 'horizontal',size_hint_y = .05)
+    play_layout_result = BoxLayout(orientation = 'horizontal',size_hint_y = .05,spacing = 10)
+    play_layout_btn =  BoxLayout(orientation = 'horizontal',size_hint_y = .05,spacing = 5,padding = 5)
     play_label_score = Label(text = 'Score: 0')
     play_label_time_passed = Label(text = 'Time Passed: 0')
     play_label_time_left = Label(text = 'Time Left: 100')
-
-    play_btn_startover = Button(text = 'Start Over')
-    play_btn_return = Button(text = 'Return to Menu')
+    play_lable_copyright = Label(
+        text = 'Made by Changxuan Wu and Shuyang Deng in 2018',
+        size_hint_y = .05)
+    play_btn_startover = Button(text = 'Start Over',
+        background_normal = '',background_color = [1,0,0,.9], color = [0,0,0,1])
+    play_btn_return = Button(text = 'Return to Menu',
+        background_normal = '',background_color = [0,1,0,.75], color = [0,0,0,.8])
 
     menu_btn_start = Button(text = 'Start',size_hint_y = 0.2)
     menu_picture = Label(text = 'Picture goes here')
-
+    menu_textinput = TextInput(text = '10')
+    menu_textinput2 = TextInput(text = '10')
     ncols,nrows,score,time_passed,time_left = [10,10,0,0,100]
 
     def return_to_menu(self,instance):
@@ -52,6 +57,7 @@ class MainLayout(BoxLayout):
         # add the gameboard to the main layout
         layout_gameboard = GridLayout(padding = 10, spacing = 10, cols = self.ncols, rows = self.nrows)
         self.add_widget(layout_gameboard)
+        self.add_widget(self.play_lable_copyright)
         #initialize tht board
         init_board(layout_gameboard, self.ncols, self.nrows)
     #display_layout = GridLayout(padding = 10, spacing = 10, cols = 11, rows = 11)
