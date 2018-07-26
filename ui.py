@@ -22,35 +22,45 @@ Config.write()
 class FinalProject(App):
 
     def intialize_board(self, display_layout, nrows, ncols):
-        # colors of the Jewels
-        color_dict = {}
-        color_dict['Red'] = [1, 0, 0, .75]
-        color_dict['Green'] =[0, 1, 0, .75]
-        color_dict['Blue'] = [0, 0, 1, .75]
-        color_dict['Yellow'] =[1, 1, 0, .75]
-        color_dict['Pink'] =[1, 0, 1, .75]
-        color_dict['Cyan'] = [0, 1, 1, .75]
+        # possible colors of the Jewels in rgba coodinates
+        color_dict = []
+        color_dict.append([1, 0, 0, .75])
+        color_dict.append([0, 1, 0, .75])
+        color_dict.append([0, 0, 1, .75])
+        color_dict.append([1, 1, 0, .75])
+        color_dict.append([1, 0, 1, .75])
+        color_dict.append([0, 1, 1, .75])
 
         # initialize a matrix to record all the buttons
         btn_matrix = [[0 for j in range(ncols)] for i in range(nrows)]
         # build buttons with random color from the dictionary
-
         for i in range(nrows):
             for j in range(ncols):
                 btn_matrix[i][j] = Button(text = '({},{})'.format(i,j))
                 btn_matrix[i][j].background_normal = ''
-                btn_matrix[i][j].background_color = list(color_dict.values())[r(0,len(color_dict)-1)]
+                self.intialize_color(btn_matrix, color_dict, i,j)
+                #btn_matrix[i][j].background_color = color_dict[r(0,len(color_dict)-1)]
                 display_layout.add_widget(btn_matrix[i][j])
         return btn_matrix
 
-    def intialize_color(btn_matrix, color_dict, i,j):
-        try :
-            if btn_matrix[i - 2][j].background_color == btn_matrix[i - 1][j].background_color:
-                
+    def intialize_color(self,btn_matrix, color_dict, i,j):
+        used_bc = []
+        if i < 2:
             pass
-        except:
-            btn_matrix[i][j].background_color = list(
-            color_dict.values())[r(0,len(color_dict)-1)]
+        elif btn_matrix[i-1][j].background_color == btn_matrix[i-2][j].background_color:
+            print (btn_matrix[i-1][j].background_color)
+            used_bc.append(btn_matrix[i-1][j].background_color)
+        if j < 2:
+            pass
+        elif btn_matrix[i][j-1].background_color == btn_matrix[i][j-2].background_color:
+            print (btn_matrix[i][j-1].background_color)
+            used_bc.append(btn_matrix[i][j-1].background_color)
+        for bc in used_bc:
+            color_dict.remove(bc)
+        btn_matrix[i][j].background_color = color_dict[r(0,len(color_dict)-1)]
+        for bc in used_bc:
+            color_dict.append(bc)
+
     def build(self):
         title = Label(text = 'Eliminates the Jewels',size_hint_y = .05)
 
