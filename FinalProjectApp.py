@@ -20,57 +20,59 @@ Config.set('graphics', 'resizable', False)
 Config.write()
 
 class MainLayout(BoxLayout):
-    title = Label(text = 'Eliminates the Jewels',size_hint_y = .1,font_size='25sp')
+    play_label_title = Label(text = 'Eliminates the Jewels',size_hint_y = .1,font_size='25sp')
     # layout for the result section
-    result_layout = BoxLayout(orientation = 'horizontal',size_hint_y = .05)
-    btn_layout =  BoxLayout(orientation = 'horizontal',size_hint_y = .05)
-    score = Label(text = 'Score: 0')
-    time_passed = Label(text = 'Time Passed: 0')
-    time_remaining = Label(text = 'Time Left: 100')
+    play_layout_result = BoxLayout(orientation = 'horizontal',size_hint_y = .05)
+    play_layout_btn =  BoxLayout(orientation = 'horizontal',size_hint_y = .05)
+    play_label_score = Label(text = 'Score: 0')
+    play_label_time_passed = Label(text = 'Time Passed: 0')
+    play_label_time_left = Label(text = 'Time Left: 100')
 
-    btn_start_over = Button(text = 'Start Over')
-    btn_return = Button(text = 'Return to Menu')
+    play_btn_startover = Button(text = 'Start Over')
+    play_btn_return = Button(text = 'Return to Menu')
 
-    btn_start = Button(text = 'Start',size_hint_y = 0.2)
-    picture = Label(text = 'Picture goes here')
-    ncols = 10
-    nrows = 10
+    menu_btn_start = Button(text = 'Start',size_hint_y = 0.2)
+    menu_picture = Label(text = 'Picture goes here')
+
+    ncols,nrows,score,time_passed,time_left = [10,10,0,0,100]
+
     def return_to_menu(self,instance):
         self.clear_widgets()
         Window.size = (500,300)
-        self.add_widget(self.picture)
-        self.add_widget(self.btn_start)
-        self.btn_start.bind(on_press = self.start_game)
+        self.add_widget(self.menu_picture)
+        self.add_widget(self.menu_btn_start)
+        self.menu_btn_start.bind(on_press = self.start_game)
 
     def start_game(self,instance):
         self.clear_widgets()
         Window.size = (500,600)
-        self.add_widget(self.title)
-        self.add_widget(self.btn_layout)
-        self.add_widget(self.result_layout)
+        self.add_widget(self.play_label_title)
+        self.add_widget(self.play_layout_btn)
+        self.add_widget(self.play_layout_result)
         # add the gameboard to the main layout
-        gameboard_layout = GridLayout(padding = 10, spacing = 10, cols = self.ncols, rows = self.nrows)
-        self.add_widget(gameboard_layout)
+        layout_gameboard = GridLayout(padding = 10, spacing = 10, cols = self.ncols, rows = self.nrows)
+        self.add_widget(layout_gameboard)
         #initialize tht board
-        init_board(gameboard_layout, self.ncols, self.nrows)
+        init_board(layout_gameboard, self.ncols, self.nrows)
     #display_layout = GridLayout(padding = 10, spacing = 10, cols = 11, rows = 11)
     def __init__(self, **kwargs):
         super(MainLayout,self).__init__(**kwargs)
-        self.result_layout.add_widget(self.score)
-        self.result_layout.add_widget(self.time_passed)
-        self.result_layout.add_widget(self.time_remaining)
+        self.play_layout_result.add_widget(self.play_label_score)
+        self.play_layout_result.add_widget(self.play_label_time_passed)
+        self.play_layout_result.add_widget(self.play_label_time_left)
         #with self.result_layout.canvas.before:
         #    Color(0, 1, 0, 1)
         #    self.result_layout.rect = Rectangle(size=self.result_layout.size,
         #                   pos=self.result_layout.pos)
-        self.btn_layout.add_widget(self.btn_return)
-        self.btn_layout.add_widget(self.btn_start_over)
-        self.btn_return.bind(on_press = self.return_to_menu)
+        self.play_layout_btn.add_widget(self.play_btn_return)
+        self.play_layout_btn.add_widget(self.play_btn_startover)
 
+        self.play_btn_return.bind(on_press = self.return_to_menu)
+        self.play_btn_startover.bind(on_press = self.start_game)
 
-        self.add_widget(self.picture)
-        self.add_widget(self.btn_start)
-        self.btn_start.bind(on_press = self.start_game)
+        self.add_widget(self.menu_picture)
+        self.add_widget(self.menu_btn_start)
+        self.menu_btn_start.bind(on_press = self.start_game)
 
 
         #self.add_widget(self.display_layout)
@@ -120,13 +122,9 @@ def init_btn_color(btn_matrix, color_dict, i,j):
 
 class FinalProjectApp(App):
     def build(self):
-
-        #Window.size = (500, 600)
         ncols,nrows = [10,10]
-
         # main layout of the game when user is playing
         root = MainLayout(orientation='vertical')
-
         return root
 
 
