@@ -44,4 +44,4 @@ Dimensions of the canvas. （Or difficulties ）
 
 * Expected output
 
-player's happy
+player's happiness
