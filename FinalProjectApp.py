@@ -15,14 +15,9 @@ from random import randint as r
 
 # Set the initial size of the login interface
 Config.set('graphics', 'width', '500')
-Config.set('graphics', 'height', '600')
+Config.set('graphics', 'height', '300')
 Config.set('graphics', 'resizable', False)
 Config.write()
-
-class StartMenuLayout(BoxLayout):
-    def __init__(self, **kwargs):
-        super(StartMenuLayout,self).__init__(**kwargs)
-
 
 class MainLayout(BoxLayout):
     title = Label(text = 'Eliminates the Jewels',size_hint_y = .1,font_size='25sp')
@@ -32,9 +27,32 @@ class MainLayout(BoxLayout):
     score = Label(text = 'Score: 0')
     time_passed = Label(text = 'Time Passed: 0')
     time_remaining = Label(text = 'Time Left: 100')
+
     btn_start_over = Button(text = 'Start Over')
     btn_return = Button(text = 'Return to Menu')
 
+    btn_start = Button(text = 'Start',size_hint_y = 0.2)
+    picture = Label(text = 'Picture goes here')
+    ncols = 10
+    nrows = 10
+    def return_to_menu(self,instance):
+        self.clear_widgets()
+        Window.size = (500,300)
+        self.add_widget(self.picture)
+        self.add_widget(self.btn_start)
+        self.btn_start.bind(on_press = self.start_game)
+
+    def start_game(self,instance):
+        self.clear_widgets()
+        Window.size = (500,600)
+        self.add_widget(self.title)
+        self.add_widget(self.btn_layout)
+        self.add_widget(self.result_layout)
+        # add the gameboard to the main layout
+        gameboard_layout = GridLayout(padding = 10, spacing = 10, cols = self.ncols, rows = self.nrows)
+        self.add_widget(gameboard_layout)
+        #initialize tht board
+        init_board(gameboard_layout, self.ncols, self.nrows)
     #display_layout = GridLayout(padding = 10, spacing = 10, cols = 11, rows = 11)
     def __init__(self, **kwargs):
         super(MainLayout,self).__init__(**kwargs)
@@ -47,63 +65,60 @@ class MainLayout(BoxLayout):
         #                   pos=self.result_layout.pos)
         self.btn_layout.add_widget(self.btn_return)
         self.btn_layout.add_widget(self.btn_start_over)
+        self.btn_return.bind(on_press = self.return_to_menu)
 
 
-        self.add_widget(self.title)
-        self.add_widget(self.btn_layout)
-        self.add_widget(self.result_layout)
+        self.add_widget(self.picture)
+        self.add_widget(self.btn_start)
+        self.btn_start.bind(on_press = self.start_game)
 
 
         #self.add_widget(self.display_layout)
 
-class FinalProjectApp(App):
+def init_board(gameboard_layout, nrows, ncols):
+    # possible colors of the Jewels in rgba coodinates
+    color_dict = []
+    color_dict.append([1, 0, 0, .75])
+    color_dict.append([0, 1, 0, .75])
+    color_dict.append([0, 0, 1, .75])
+    color_dict.append([1, 1, 0, .75])
+    color_dict.append([1, 0, 1, .75])
+    color_dict.append([0, 1, 1, .75])
 
-    def init_board(self, gameboard_layout, nrows, ncols):
-        # possible colors of the Jewels in rgba coodinates
-        color_dict = []
-        color_dict.append([1, 0, 0, .75])
-        color_dict.append([0, 1, 0, .75])
-        color_dict.append([0, 0, 1, .75])
-        color_dict.append([1, 1, 0, .75])
-        color_dict.append([1, 0, 1, .75])
-        color_dict.append([0, 1, 1, .75])
+    # initialize a matrix to record all the buttons
+    btn_matrix = [[0 for j in range(ncols)] for i in range(nrows)]
+    # build buttons with random color from the dictionary
+    for i in range(nrows):
+        for j in range(ncols):
+            btn_matrix[i][j] = Button()#text = '({},{})'.format(i,j))
+            btn_matrix[i][j].background_normal = ''
+            init_btn_color(btn_matrix, color_dict, i,j)
+            #btn_matrix[i][j].background_color = color_dict[r(0,len(color_dict)-1)]
+            gameboard_layout.add_widget(btn_matrix[i][j])
+    return btn_matrix
 
-        # initialize a matrix to record all the buttons
-        btn_matrix = [[0 for j in range(ncols)] for i in range(nrows)]
-        # build buttons with random color from the dictionary
-        for i in range(nrows):
-            for j in range(ncols):
-                btn_matrix[i][j] = Button()#text = '({},{})'.format(i,j))
-                btn_matrix[i][j].background_normal = ''
-                self.init_btn_color(btn_matrix, color_dict, i,j)
-                #btn_matrix[i][j].background_color = color_dict[r(0,len(color_dict)-1)]
-                gameboard_layout.add_widget(btn_matrix[i][j])
-        return btn_matrix
-
-    def init_btn_color(self,btn_matrix, color_dict, i,j):
-        used_bc = []
-        if i < 2:
-            pass
-        elif btn_matrix[i-1][j].background_color == btn_matrix[i-2][j].background_color:
-            #print (btn_matrix[i-1][j].background_color)
-            used_bc.append(btn_matrix[i-1][j].background_color)
-        if j < 2:
-            pass
-        elif btn_matrix[i][j-1].background_color == btn_matrix[i][j-2].background_color:
-            #print (btn_matrix[i][j-1].background_color)
-            used_bc.append(btn_matrix[i][j-1].background_color)
-        for bc in used_bc:
-            try:
-                color_dict.remove(bc)
-            except:
-                pass
-        btn_matrix[i][j].background_color = color_dict[r(0,len(color_dict)-1)]
-        for bc in used_bc:
-            color_dict.append(bc)
-
-    def clear_the_layout(layout):
+def init_btn_color(btn_matrix, color_dict, i,j):
+    used_bc = []
+    if i < 2:
         pass
+    elif btn_matrix[i-1][j].background_color == btn_matrix[i-2][j].background_color:
+        #print (btn_matrix[i-1][j].background_color)
+        used_bc.append(btn_matrix[i-1][j].background_color)
+    if j < 2:
+        pass
+    elif btn_matrix[i][j-1].background_color == btn_matrix[i][j-2].background_color:
+        #print (btn_matrix[i][j-1].background_color)
+        used_bc.append(btn_matrix[i][j-1].background_color)
+    for bc in used_bc:
+        try:
+            color_dict.remove(bc)
+        except:
+            pass
+    btn_matrix[i][j].background_color = color_dict[r(0,len(color_dict)-1)]
+    for bc in used_bc:
+        color_dict.append(bc)
 
+class FinalProjectApp(App):
     def build(self):
 
         #Window.size = (500, 600)
@@ -111,11 +126,7 @@ class FinalProjectApp(App):
 
         # main layout of the game when user is playing
         root = MainLayout(orientation='vertical')
-        # add the gameboard to the main layout
-        gameboard_layout = GridLayout(padding = 10, spacing = 10, cols = ncols, rows = nrows)
-        root.add_widget(gameboard_layout)
-        #initialize tht board
-        self.init_board(gameboard_layout, ncols, nrows)
+
         return root
 
 
