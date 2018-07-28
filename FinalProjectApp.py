@@ -13,25 +13,22 @@ from kivy.uix.gridlayout import GridLayout
 from functools import partial
 from random import randint as r
 import numpy as np
-from functools import partial
 
 
 class MainLayout(BoxLayout):
-    # 参数设置
-    play_layout_status, play_layout_btn, \
-        play_label_title, play_label_score, \
-        play_label_time_passed, play_label_time_left, \
-        play_lable_copyright, \
-        play_btn_startover, play_btn_return = [0 for i in range(9)]
-    menu_btn_start, menu_picture = [0 for i in range(2)]
-
+    def size_window(self,nrows,ncols):
+        jewel_size = 40
+        padding = 10
+        x = (jewel_size + padding) * ncols + padding
+        y = x / 0.8
+        Window.size = (x, y)
+        return [x,y]
     def return_to_menu(self, instance):
         self.clear_widgets()
         Window.size = (500, 300)
         self.add_widget(self.menu_picture)
         self.add_widget(self.menu_btn_start)
         self.menu_btn_start.bind(on_press=self.start_game)
-
     def load_board(self):
         self.add_widget(self.play_label_title)
         self.add_widget(self.play_layout_btn)
@@ -42,7 +39,6 @@ class MainLayout(BoxLayout):
         self.add_widget(self.layout_gameboard)
         self.add_widget(self.play_lable_copyright)
         self.init_board()
-
     def button_action(self, i, j, *largs):
         if self.click_count % 2 == 0:
             temp_color = self.btn_matrix[i][j].background_color[:3]
@@ -64,8 +60,6 @@ class MainLayout(BoxLayout):
         self.click_count += 1
         for _ in range(4):
             self.check_score()
-
-
     def check_score(self):
         for i in range(self.nrows):
             for j in range(self.ncols):
@@ -82,7 +76,6 @@ class MainLayout(BoxLayout):
                             for x in range(3):
                                 self.init_btn_color(i+x,j)
         self.play_label_score.text = 'Score: %d'%self.score
-
     def init_board(self):
         # possible colors of the Jewels in rgba coodinates
         self.color_dict = []
@@ -107,7 +100,6 @@ class MainLayout(BoxLayout):
                 self.layout_gameboard.add_widget(self.btn_matrix[i][j])
                 self.init_btn_color(i, j)
         return self.btn_matrix
-
     def init_btn_color(self, i, j):
         used_bc = []
         if i < 2:
@@ -127,15 +119,13 @@ class MainLayout(BoxLayout):
             0, len(self.color_dict) - 1)]
         for bc in used_bc:
             self.color_dict.append(bc)
-
     def start_game(self, instance):
         self.clear_widgets()
         self.restart_set()
-        Window.size = (500, 500)
+        self.size_window(self.nrows,self.ncols)
         # 1. initialize and load tht board
         self.load_board()
         Clock.schedule_interval(self.time_cal, 0.1)  # x s刷新一次
-
     def time_cal(self, dt):
         self.time_passed += dt
         self.time_left -= dt
@@ -145,15 +135,13 @@ class MainLayout(BoxLayout):
         if self.time_left <= 0:
             self.clear_widgets()
             self.restart_set()
-            Window.size = (500, 500)
+            self.size_window(self.nrows,self.ncols)
             # 1. initialize and load tht board
             self.load_board()
-
     def restart_set(self):
         self.ncols, self.nrows, self.score, self.time_passed, self.time_left = [
             10, 10, 0, 0, 100]
         self.click_count = 0
-
     def __init__(self, **kwargs):
         super(MainLayout, self).__init__(**kwargs)
         # 定义一些控件
@@ -195,7 +183,6 @@ class MainLayout(BoxLayout):
         self.add_widget(self.menu_picture)
         self.add_widget(self.menu_btn_start)
         self.menu_btn_start.bind(on_press=self.start_game)
-
 
 class FinalProjectApp(App):
     def build(self):
