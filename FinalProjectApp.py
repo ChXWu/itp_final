@@ -13,9 +13,10 @@ from kivy.uix.gridlayout import GridLayout
 from functools import partial
 from random import randint as r
 import numpy as np
-
+from time import sleep
 
 class MainLayout(BoxLayout):
+    # size the window accoording to nrows and ncols
     def size_window(self,nrows,ncols):
         jewel_size = 40
         padding = 10
@@ -41,53 +42,69 @@ class MainLayout(BoxLayout):
         self.init_board()
     def button_action(self, i, j, *largs):
         if self.click_count % 2 == 0:
-            # highlight the button
-            temp_color = self.btn_matrix[i][j].background_color[:3]
-            temp_color.append(1)
-            self.btn_matrix[i][j].background_color = temp_color
+            # highlight the button, simpler way
+            self.btn_matrix[i][j].background_color[3] = 1
             self.click_record = [i,j]
         else:
             last_position = self.click_record
             error = abs(last_position[0]-i)+abs(last_position[1]-j)
             if error == 1:
+                # switch two buttons
                 temp_button_color = self.btn_matrix[i][j].background_color
                 self.btn_matrix[i][j].background_color = self.btn_matrix[last_position[0]][last_position[1]].background_color
                 self.btn_matrix[last_position[0]][last_position[1]].background_color = temp_button_color
             elif error > 1:
                 i,j = last_position
-            temp_color = self.btn_matrix[i][j].background_color[:3]
-            temp_color.append(self.alpha)
-            self.btn_matrix[i][j].background_color = temp_color
+            self.btn_matrix[i][j].background_color[3] = self.btn_alpha
         self.click_count += 1
-        for _ in range(4):
-            self.check_score()
+
+        self.check_score()
+        a = 1
+        if self.click_count % 2 == 0:
+            Clock.schedule_once(self.black_e_list,.5)
+
+    def black_e_list(self,dt):
+        for btn in self.e_list:
+            self.btn_matrix[btn[0]][btn[1]].background_color = [0,0,0,0]
+
     def check_score(self):
         for i in range(self.nrows):
             for j in range(self.ncols):
                 if j+2 < self.nrows:
-                    if self.btn_matrix[i][j].background_color == self.btn_matrix[i][j+1].background_color:
-                        if self.btn_matrix[i][j].background_color == self.btn_matrix[i][j+2].background_color:
+                    if self.btn_matrix[i][j].background_color[:3] == self.btn_matrix[i][j+1].background_color[:3]:
+                        if self.btn_matrix[i][j].background_color[:3] == self.btn_matrix[i][j+2].background_color[:3]:
                             self.score += 3
                             for x in range(3):
-                                self.init_btn_color(i,j+x)
+                                self.btn_matrix[i][j+x].background_color[3] = 1
+                                self.e_list += ([i,j+x],)
                 if i+2 < self.ncols:
-                    if self.btn_matrix[i][j].background_color == self.btn_matrix[i+1][j].background_color:
-                        if self.btn_matrix[i][j].background_color == self.btn_matrix[i+2][j].background_color:
+                    if self.btn_matrix[i][j].background_color[:3] == self.btn_matrix[i+1][j].background_color[:3]:
+                        if self.btn_matrix[i][j].background_color[:3] == self.btn_matrix[i+2][j].background_color[:3]:
                             self.score += 3
                             for x in range(3):
-                                self.init_btn_color(i+x,j)
+                                self.btn_matrix[i+x][j].background_color[3] = 1
+                                self.e_list += ([i+x,j],)
+
         self.play_label_score.text = 'Score: %d'%self.score
+
+    def check_aligned(self):
+        self.e_list = []
+        self.m_list = []
+        while len(e_list) > 0:
+            self.btn_matrix[i][j+x].background_color = [0,0,0,0]
+            pass
+
     def init_board(self):
         # possible colors of the Jewels in rgba coodinates
 
         self.color_dict = []
-        self.alpha = .7
-        self.color_dict.append([1, 0, 0, self.alpha])
-        self.color_dict.append([0, 1, 0, self.alpha])
-        self.color_dict.append([0, 0, 1, self.alpha])
-        self.color_dict.append([1, 1, 0, self.alpha])
-        self.color_dict.append([1, 0, 1, self.alpha])
-        self.color_dict.append([0, 1, 1, self.alpha])
+        self.btn_alpha = .4
+        self.color_dict.append([1, 0, 0, self.btn_alpha])
+        self.color_dict.append([0, 1, 0, self.btn_alpha])
+        self.color_dict.append([0, 0, 1, self.btn_alpha])
+        self.color_dict.append([1, 1, 0, self.btn_alpha])
+        self.color_dict.append([1, 0, 1, self.btn_alpha])
+        self.color_dict.append([0, 1, 1, self.btn_alpha])
 
         # initialize a matrix to record all the buttons
         self.btn_matrix = [
@@ -186,6 +203,9 @@ class MainLayout(BoxLayout):
         self.add_widget(self.menu_picture)
         self.add_widget(self.menu_btn_start)
         self.menu_btn_start.bind(on_press=self.start_game)
+
+        self.m_list = []
+        self.e_list = ()
 
 class FinalProjectApp(App):
     def build(self):
