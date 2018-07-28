@@ -41,6 +41,7 @@ class MainLayout(BoxLayout):
         self.init_board()
     def button_action(self, i, j, *largs):
         if self.click_count % 2 == 0:
+            # highlight the button
             temp_color = self.btn_matrix[i][j].background_color[:3]
             temp_color.append(1)
             self.btn_matrix[i][j].background_color = temp_color
@@ -55,7 +56,7 @@ class MainLayout(BoxLayout):
             elif error > 1:
                 i,j = last_position
             temp_color = self.btn_matrix[i][j].background_color[:3]
-            temp_color.append(0.75)
+            temp_color.append(self.alpha)
             self.btn_matrix[i][j].background_color = temp_color
         self.click_count += 1
         for _ in range(4):
@@ -78,13 +79,15 @@ class MainLayout(BoxLayout):
         self.play_label_score.text = 'Score: %d'%self.score
     def init_board(self):
         # possible colors of the Jewels in rgba coodinates
+
         self.color_dict = []
-        self.color_dict.append([1, 0, 0, .75])
-        self.color_dict.append([0, 1, 0, .75])
-        self.color_dict.append([0, 0, 1, .75])
-        self.color_dict.append([1, 1, 0, .75])
-        self.color_dict.append([1, 0, 1, .75])
-        self.color_dict.append([0, 1, 1, .75])
+        self.alpha = .7
+        self.color_dict.append([1, 0, 0, self.alpha])
+        self.color_dict.append([0, 1, 0, self.alpha])
+        self.color_dict.append([0, 0, 1, self.alpha])
+        self.color_dict.append([1, 1, 0, self.alpha])
+        self.color_dict.append([1, 0, 1, self.alpha])
+        self.color_dict.append([0, 1, 1, self.alpha])
 
         # initialize a matrix to record all the buttons
         self.btn_matrix = [
@@ -162,9 +165,9 @@ class MainLayout(BoxLayout):
             text='Made by Changxuan Wu and Shuyang Deng in 2018',
             size_hint_y=.05)
         self.play_btn_startover = Button(text='Start Over',
-                                         background_normal='', background_color=[1, 0, 0, .9], color=[0, 0, 0, 1])
+                                         background_normal='', background_color=[1, 0, 0, .5], color=[0, 0, 0, 1])
         self.play_btn_return = Button(text='Return to Menu',
-                                      background_normal='', background_color=[0, 1, 0, .75], color=[0, 0, 0, .8])
+                                      background_normal='', background_color=[0, 1, 0, .5], color=[0, 0, 0, .8])
 
         self.menu_btn_start = Button(text='Start', size_hint_y=0.2)
         self.menu_picture = Label(text='Picture goes here')
