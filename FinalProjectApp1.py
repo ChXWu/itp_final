@@ -1,3 +1,4 @@
+
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.config import Config
@@ -42,7 +43,7 @@ class MainLayout(BoxLayout):
         self.add_widget(self.layout_gameboard)
         self.add_widget(self.play_lable_copyright)
         self.init_board()
-
+# 方块交换
     def button_action(self, i, j, *largs):
         if self.click_count % 2 == 0:
             temp_color = self.btn_matrix[i][j].background_color[:3]
@@ -51,25 +52,25 @@ class MainLayout(BoxLayout):
             self.click_record = [i,j]
         else:
             last_position = self.click_record
-            error = abs(last_position[0]-i)+abs(last_position[1]-j) 
+            error = abs(last_position[0]-i)+abs(last_position[1]-j)
             if error == 1:
                 temp_button_color = self.btn_matrix[i][j].background_color
                 self.btn_matrix[i][j].background_color = self.btn_matrix[last_position[0]][last_position[1]].background_color
                 self.btn_matrix[last_position[0]][last_position[1]].background_color = temp_button_color
             elif error > 1:
                 i,j = last_position
-            temp_color = self.btn_matrix[i][j].background_color[:3]
+            temp_color = self.btn_matrix[i][j].background_color[:3]#只取前三个值
             temp_color.append(0.75)
             self.btn_matrix[i][j].background_color = temp_color
         self.click_count += 1
-        for _ in range(4):
-            self.check_score()  
+        for _ in range(4):#检查四次
+            self.check_score()
 
-
+# 消除及得分
     def check_score(self):
         for i in range(self.nrows):
             for j in range(self.ncols):
-                if j+2 < self.nrows:
+                if j+2 < self.nrows:#不超范围
                     if self.btn_matrix[i][j].background_color == self.btn_matrix[i][j+1].background_color:
                         if self.btn_matrix[i][j].background_color == self.btn_matrix[i][j+2].background_color:
                             self.score += 3
@@ -105,12 +106,12 @@ class MainLayout(BoxLayout):
 
                 self.btn_matrix[i][j].background_normal = ''
                 self.layout_gameboard.add_widget(self.btn_matrix[i][j])
-                self.init_btn_color(i, j)
+                self.init_btn_color(i, j)#定颜色
         return self.btn_matrix
 
     def init_btn_color(self, i, j):
         used_bc = []
-        if i < 2:
+        if i < 2: #左面两个
             pass
         elif self.btn_matrix[i - 1][j].background_color == self.btn_matrix[i - 2][j].background_color:
             used_bc.append(self.btn_matrix[i - 1][j].background_color)
@@ -124,7 +125,7 @@ class MainLayout(BoxLayout):
             except:
                 pass
         self.btn_matrix[i][j].background_color = self.color_dict[r(
-            0, len(self.color_dict) - 1)]
+            0, len(self.color_dict) - 1)]#去掉不能用的颜色，随机选个颜色
         for bc in used_bc:
             self.color_dict.append(bc)
 
@@ -134,7 +135,7 @@ class MainLayout(BoxLayout):
         Window.size = (500, 500)
         # 1. initialize and load tht board
         self.load_board()
-        Clock.schedule_interval(self.time_cal, 0.1)  # x s刷新一次
+        Clock.schedule_interval(self.time_cal, 0.1)  # x 0.1s刷新一次
 
     def time_cal(self, dt):
         self.time_passed += dt
@@ -157,7 +158,7 @@ class MainLayout(BoxLayout):
     def __init__(self, **kwargs):
         super(MainLayout, self).__init__(**kwargs)
         # 定义一些控件
-        self.restart_set()
+        self.restart_set() #初始化
         self.play_label_title = Label(
             text='Eliminates the Jewels', size_hint_y=.1, font_size='25sp')
         # layout for the status section
@@ -174,7 +175,7 @@ class MainLayout(BoxLayout):
             text='Made by Changxuan Wu and Shuyang Deng in 2018',
             size_hint_y=.05)
         self.play_btn_startover = Button(text='Start Over',
-                                         background_normal='', background_color=[1, 0, 0, .9], color=[0, 0, 0, 1])
+                                         background_normal='', background_color=[1, 0, 0, .9], color=[0, 0, 0, 1]) #rgb值和透明度
         self.play_btn_return = Button(text='Return to Menu',
                                       background_normal='', background_color=[0, 1, 0, .75], color=[0, 0, 0, .8])
 
@@ -191,7 +192,7 @@ class MainLayout(BoxLayout):
 
         self.play_btn_return.bind(on_press=self.return_to_menu)
         self.play_btn_startover.bind(on_press=self.start_game)
-
+#加到主布局
         self.add_widget(self.menu_picture)
         self.add_widget(self.menu_btn_start)
         self.menu_btn_start.bind(on_press=self.start_game)
@@ -199,6 +200,7 @@ class MainLayout(BoxLayout):
 
 class FinalProjectApp(App):
     def build(self):
+        #先运行build
         # main layout of the game when user is playing
         root = MainLayout(orientation='vertical')
         return root
