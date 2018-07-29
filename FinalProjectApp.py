@@ -129,7 +129,6 @@ def init_board(gameboard_layout, nrows, ncols):
             gameboard_layout.add_widget(btn_matrix[i][j])
     return btn_matrix
 
-
 def init_btn_color(btn_matrix, color_dict, i,j):
     used_bc = []
     if i < 2:
