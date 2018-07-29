@@ -45,7 +45,6 @@ class MainLayout(BoxLayout):
         self.btn_matrix[btn1[0]][btn1[1]].background_color = self.btn_matrix[btn2[0]][btn2[1]].background_color
         self.btn_matrix[btn2[0]][btn2[1]].background_color = temp_button_color
     def button_action(self, i, j, *largs):
-
         print(len(self.e_list))
         if self.click_count % 2 == 0:
             # highlight the button, simpler way
