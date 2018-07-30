@@ -32,7 +32,7 @@ class MainLayout(BoxLayout):
             if error == 1:
                 # switch two buttons
                 self.switch_button(last_position,[i,j])
-                self.check_score()
+                self.check_board()
                 if self.is_finished == True:
                     self.switch_button(last_position,[i,j])
                 else:
@@ -44,23 +44,22 @@ class MainLayout(BoxLayout):
         else:
             #print ("in Check status")
             #pprint(self.e_list)
-            Clock.schedule_once(self.black_btn,.05)
+            Clock.schedule_once(self.eliminate_btns,.05)
             Clock.schedule_once(self.drop_jewels,.1)
-            Clock.schedule_once(partial(self.check_score),.3)
+            Clock.schedule_once(partial(self.check_board),.3)
             Clock.schedule_once(partial(self.update_gameboard),.5)
-
-    def black_btn(self,dt):
+    def eliminate_btns(self,dt):
         for btn in self.e_list:
             self.btn_matrix[btn[0]][btn[1]].background_color = [0,0,0,self.btn_alpha]
     def drop_jewels(self,dt):
         start_time = 0
         # while len(self.e_list) > 0:
-        for i in range(self.num_level()):
+        for i in range(self.num_drop_level()):
             Clock.schedule_once(self.drop_one_level,start_time)
             #self.drop_one_level(dt)
             start_time += 0.03
         pprint (self.e_list)
-    def num_level(self):
+    def num_drop_level(self):
         num_level = 0
         current = self.e_list
         for btn in self.e_list:
@@ -88,7 +87,7 @@ class MainLayout(BoxLayout):
                 self.btn_matrix[0][btn[1]].background_color[3] = self.btn_alpha
             else:
                 break
-    def check_score(self,*args):
+    def check_board(self,*args):
         self.is_finished = True
         init_score = self.score
         for i in range(self.nrows):
@@ -110,14 +109,14 @@ class MainLayout(BoxLayout):
                                 #add the jewels to remove to a list
                                 self.e_list.append([i+x,j])
         self.sort_e_list()
-        self.play_label_score.text = 'Score: %d'%self.score
+        self.update_score()
         #Check if the move is successful
         if init_score == self.score:
             self.is_finished = True
         else:
             self.is_finished = False
-
-
+    def update_score(self):
+        self.play_label_score.text = 'Score: %d'%self.score
 
     def start_game(self, instance):
         self.clear_widgets()
@@ -125,7 +124,11 @@ class MainLayout(BoxLayout):
         self.size_window(self.nrows,self.ncols)
         # 1. initialize and load tht board
         self.load_board()
+        self.update_gameboard()
+        if self.timer_is_on:
+            return
         Clock.schedule_interval(self.time_cal, 0.1)  # x s刷新一次
+        self.timer_is_on = True
     def time_cal(self, dt):
         self.time_passed += dt
         self.time_left -= dt
@@ -265,6 +268,7 @@ class MainLayout(BoxLayout):
         self.ncols, self.nrows, self.score, self.time_passed, self.time_left = [
                     10, 10, 0, 0, 100]
         self.click_count = 0
+        self.timer_is_on = False
 
 class FinalProjectApp(App):
     def build(self):
