@@ -17,35 +17,6 @@ from pprint import pprint
 
 
 class MainLayout(BoxLayout):
-    is_finished = True
-    # size the window accoording to nrows and ncols
-    def size_window(self,nrows,ncols):
-        jewel_size = 40
-        padding = 10
-        x = (jewel_size + padding) * ncols + padding
-        y = x / 0.8
-        Window.size = (x, y)
-        return [x,y]
-    def return_to_menu(self, instance):
-        self.clear_widgets()
-        Window.size = (500, 300)
-        self.add_widget(self.menu_picture)
-        self.add_widget(self.menu_btn_start)
-        self.menu_btn_start.bind(on_press=self.start_game)
-    def load_board(self):
-        self.add_widget(self.play_label_title)
-        self.add_widget(self.play_layout_btn)
-        self.add_widget(self.play_layout_status)
-        # add the gameboard to the main layout
-        self.layout_gameboard = GridLayout(
-            padding=10, spacing=10, cols=self.ncols, rows=self.nrows)
-        self.add_widget(self.layout_gameboard)
-        self.add_widget(self.play_lable_copyright)
-        self.init_board()
-    def switch_button(self,btn1,btn2,*args):
-        temp_button_color = self.btn_matrix[btn1[0]][btn1[1]].background_color
-        self.btn_matrix[btn1[0]][btn1[1]].background_color = self.btn_matrix[btn2[0]][btn2[1]].background_color
-        self.btn_matrix[btn2[0]][btn2[1]].background_color = temp_button_color
     def button_action(self, i, j, *largs):
         # print(len(self.e_list))
         if self.click_count % 2 == 0:
@@ -67,23 +38,20 @@ class MainLayout(BoxLayout):
                 else:
                     self.update_gameboard()
         self.click_count += 1
-    def check_status(self,dt):
+    def update_gameboard(self,*args):
         if self.is_finished:
             return
         else:
-            print ("in Check status")
-            pprint(self.e_list)
-            self.update_gameboard()
-    def update_gameboard(self):
-        Clock.schedule_once(self.black_btn,.05)
-        Clock.schedule_once(self.drop_jewels,.1)
-        Clock.schedule_once(partial(self.check_score),.3)
-        Clock.schedule_once(self.check_status,.5)
+            #print ("in Check status")
+            #pprint(self.e_list)
+            Clock.schedule_once(self.black_btn,.05)
+            Clock.schedule_once(self.drop_jewels,.1)
+            Clock.schedule_once(partial(self.check_score),.3)
+            Clock.schedule_once(partial(self.update_gameboard),.5)
+
     def black_btn(self,dt):
         for btn in self.e_list:
             self.btn_matrix[btn[0]][btn[1]].background_color = [0,0,0,self.btn_alpha]
-    def sort_e_list(self):
-        self.e_list = sorted(list(eval(x) for x in set([str(x) for x in self.e_list])))
     def drop_jewels(self,dt):
         start_time = 0
         # while len(self.e_list) > 0:
@@ -148,6 +116,38 @@ class MainLayout(BoxLayout):
             self.is_finished = True
         else:
             self.is_finished = False
+
+
+
+    def start_game(self, instance):
+        self.clear_widgets()
+        self.restart_set()
+        self.size_window(self.nrows,self.ncols)
+        # 1. initialize and load tht board
+        self.load_board()
+        Clock.schedule_interval(self.time_cal, 0.1)  # x s刷新一次
+    def time_cal(self, dt):
+        self.time_passed += dt
+        self.time_left -= dt
+        self.play_label_time_passed.text = 'Time Passed: %.1f' % self.time_passed
+        self.play_label_time_left.text = 'Time Left: %.1f' % self.time_left
+        self.play_label_score.text = 'Score: %d'%self.score
+        if self.time_left <= 0:
+            self.clear_widgets()
+            self.restart_set()
+            self.size_window(self.nrows,self.ncols)
+            # 1. initialize and load tht board
+            self.load_board()
+    def load_board(self):
+        self.add_widget(self.play_label_title)
+        self.add_widget(self.play_layout_btn)
+        self.add_widget(self.play_layout_status)
+        # add the gameboard to the main layout
+        self.layout_gameboard = GridLayout(
+            padding=10, spacing=10, cols=self.ncols, rows=self.nrows)
+        self.add_widget(self.layout_gameboard)
+        self.add_widget(self.play_lable_copyright)
+        self.init_board()
     def init_board(self):
         # possible colors of the Jewels in rgba coodinates
         self.color_dict = []
@@ -191,29 +191,33 @@ class MainLayout(BoxLayout):
             0, len(self.color_dict) - 1)]
         for bc in used_bc:
             self.color_dict.append(bc)
-    def start_game(self, instance):
-        self.clear_widgets()
-        self.restart_set()
-        self.size_window(self.nrows,self.ncols)
-        # 1. initialize and load tht board
-        self.load_board()
-        Clock.schedule_interval(self.time_cal, 0.1)  # x s刷新一次
-    def time_cal(self, dt):
-        self.time_passed += dt
-        self.time_left -= dt
-        self.play_label_time_passed.text = 'Time Passed: %.1f' % self.time_passed
-        self.play_label_time_left.text = 'Time Left: %.1f' % self.time_left
-        self.play_label_score.text = 'Score: %d'%self.score
-        if self.time_left <= 0:
-            self.clear_widgets()
-            self.restart_set()
-            self.size_window(self.nrows,self.ncols)
-            # 1. initialize and load tht board
-            self.load_board()
+
+    # size the window accoording to nrows and ncols
+    def size_window(self,nrows,ncols):
+        jewel_size = 40
+        padding = 10
+        x = (jewel_size + padding) * ncols + padding
+        y = x / 0.8
+        Window.size = (x, y)
+        return [x,y]
+    def sort_e_list(self):
+        self.e_list = sorted(list(eval(x) for x in set([str(x) for x in self.e_list])))
+    def switch_button(self,btn1,btn2,*args):
+        temp_button_color = self.btn_matrix[btn1[0]][btn1[1]].background_color
+        self.btn_matrix[btn1[0]][btn1[1]].background_color = self.btn_matrix[btn2[0]][btn2[1]].background_color
+        self.btn_matrix[btn2[0]][btn2[1]].background_color = temp_button_color
+
     def restart_set(self):
         self.ncols, self.nrows, self.score, self.time_passed, self.time_left = [
             10, 10, 0, 0, 100]
         self.click_count = 0
+    def return_to_menu(self, instance):
+        self.clear_widgets()
+        Window.size = (500, 300)
+        self.add_widget(self.menu_picture)
+        self.add_widget(self.menu_btn_start)
+        self.menu_btn_start.bind(on_press=self.start_game)
+
     def __init__(self, **kwargs):
         super(MainLayout, self).__init__(**kwargs)
         # 定义一些控件
@@ -257,6 +261,10 @@ class MainLayout(BoxLayout):
         self.menu_btn_start.bind(on_press=self.start_game)
 
         self.e_list = []
+        self.is_finished = True
+        self.ncols, self.nrows, self.score, self.time_passed, self.time_left = [
+                    10, 10, 0, 0, 100]
+        self.click_count = 0
 
 class FinalProjectApp(App):
     def build(self):
