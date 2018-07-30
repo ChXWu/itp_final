@@ -13,10 +13,8 @@ from kivy.uix.gridlayout import GridLayout
 from functools import partial
 from random import randint as r
 import numpy as np
-from time import sleep
-from datetime import datetime
 from pprint import pprint
-import threading
+
 
 class MainLayout(BoxLayout):
     is_finished = True
@@ -48,8 +46,6 @@ class MainLayout(BoxLayout):
         temp_button_color = self.btn_matrix[btn1[0]][btn1[1]].background_color
         self.btn_matrix[btn1[0]][btn1[1]].background_color = self.btn_matrix[btn2[0]][btn2[1]].background_color
         self.btn_matrix[btn2[0]][btn2[1]].background_color = temp_button_color
-    def btn_thread(self,i,j,*largs):
-        threading.Thread(target = self.button_action(i,j)).start()
     def button_action(self, i, j, *largs):
         # print(len(self.e_list))
         if self.click_count % 2 == 0:
@@ -71,7 +67,6 @@ class MainLayout(BoxLayout):
                 else:
                     self.update_gameboard()
         self.click_count += 1
-
     def check_status(self,dt):
         if self.is_finished:
             return
@@ -155,7 +150,6 @@ class MainLayout(BoxLayout):
             self.is_finished = False
     def init_board(self):
         # possible colors of the Jewels in rgba coodinates
-
         self.color_dict = []
         self.btn_alpha = .4
         self.color_dict.append([1, 0, 0, self.btn_alpha])
@@ -164,7 +158,6 @@ class MainLayout(BoxLayout):
         self.color_dict.append([1, 1, 0, self.btn_alpha])
         self.color_dict.append([1, 0, 1, self.btn_alpha])
         self.color_dict.append([0, 1, 1, self.btn_alpha])
-
         # initialize a matrix to record all the buttons
         self.btn_matrix = [
             [0 for j in range(self.ncols)] for i in range(self.nrows)]
@@ -173,7 +166,7 @@ class MainLayout(BoxLayout):
             for j in range(self.ncols):
                 # text = '({},{})'.format(i,j))
                 self.btn_matrix[i][j] = Button(
-                    on_press=partial(self.btn_thread, i, j))
+                    on_press=partial(self.button_action, i, j))
 
                 self.btn_matrix[i][j].background_normal = ''
                 self.layout_gameboard.add_widget(self.btn_matrix[i][j])
