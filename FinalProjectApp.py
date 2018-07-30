@@ -14,8 +14,12 @@ from functools import partial
 from random import randint as r
 import numpy as np
 from time import sleep
+from datetime import datetime
+from pprint import pprint
+import threading
 
 class MainLayout(BoxLayout):
+    is_finished = True
     # size the window accoording to nrows and ncols
     def size_window(self,nrows,ncols):
         jewel_size = 40
@@ -44,8 +48,10 @@ class MainLayout(BoxLayout):
         temp_button_color = self.btn_matrix[btn1[0]][btn1[1]].background_color
         self.btn_matrix[btn1[0]][btn1[1]].background_color = self.btn_matrix[btn2[0]][btn2[1]].background_color
         self.btn_matrix[btn2[0]][btn2[1]].background_color = temp_button_color
+    def btn_thread(self,i,j,*largs):
+        threading.Thread(target = self.button_action(i,j)).start()
     def button_action(self, i, j, *largs):
-        print(len(self.e_list))
+        # print(len(self.e_list))
         if self.click_count % 2 == 0:
             # highlight the button, simpler way
             self.btn_matrix[i][j].background_color[3] = 1
@@ -59,28 +65,52 @@ class MainLayout(BoxLayout):
             if error == 1:
                 # switch two buttons
                 self.switch_button(last_position,[i,j])
-                # if there's no change, switch back
-                if self.check_score() == False:
+                self.check_score()
+                if self.is_finished == True:
                     self.switch_button(last_position,[i,j])
                 else:
-                    while True:
-                        #Animation should be achieved by clock?
-                        self.e_list = self.sort_e_list()
-                        #Clock.schedule_once(partial(self.black_btn_list,self.e_list),.1)
-                        while len(self.e_list) > 0:
-                            self.jewels_fall()
-                            #Clock.schedule_once(partial(self.jewels_fall),.3)
-                        #print(len(btn_list))
-                        #self.e_list = []
-                        if self.check_score() == False:
-                            break
+                    self.update_gameboard()
         self.click_count += 1
-    def black_btn_list(self,btn_list, *args):
-        for btn in btn_list:
-            self.btn_matrix[btn[0]][btn[1]].background_color = [0,0,0,0]
+
+    def check_status(self,dt):
+        if self.is_finished:
+            return
+        else:
+            print ("in Check status")
+            pprint(self.e_list)
+            self.update_gameboard()
+    def update_gameboard(self):
+        Clock.schedule_once(self.black_btn,.05)
+        Clock.schedule_once(self.drop_jewels,.1)
+        Clock.schedule_once(partial(self.check_score),.3)
+        Clock.schedule_once(self.check_status,.5)
+    def black_btn(self,dt):
+        for btn in self.e_list:
+            self.btn_matrix[btn[0]][btn[1]].background_color = [0,0,0,self.btn_alpha]
     def sort_e_list(self):
-        return sorted(list(eval(x) for x in set([str(x) for x in self.e_list])))
-    def jewels_fall(self,*args):
+        self.e_list = sorted(list(eval(x) for x in set([str(x) for x in self.e_list])))
+    def drop_jewels(self,dt):
+        start_time = 0
+        # while len(self.e_list) > 0:
+        for i in range(self.num_level()):
+            Clock.schedule_once(self.drop_one_level,start_time)
+            #self.drop_one_level(dt)
+            start_time += 0.03
+        pprint (self.e_list)
+    def num_level(self):
+        num_level = 0
+        current = self.e_list
+        for btn in self.e_list:
+            if btn[0] == current:
+                continue
+            else:
+                current = btn[0]
+                num_level += 1
+        return num_level
+    def drop_one_level(self,dt):
+        self.sort_e_list()
+        pprint (self.e_list)
+
         if len(self.e_list) == 0:
             return
         current_level = self.e_list[0][0]
@@ -89,12 +119,14 @@ class MainLayout(BoxLayout):
                 btn = self.e_list.pop(0)
                 for i in range(current_level):
                     self.btn_matrix[btn[0]-i][btn[1]].background_color = self.btn_matrix[btn[0]-i-1][btn[1]].background_color
+
                 self.btn_matrix[0][btn[1]].background_color[:3] = self.color_dict[r(
-                    0, len(self.color_dict)-1)][:3]
+                        0, len(self.color_dict)-1)][:3]
                 self.btn_matrix[0][btn[1]].background_color[3] = self.btn_alpha
             else:
                 break
-    def check_score(self):
+    def check_score(self,*args):
+        self.is_finished = True
         init_score = self.score
         for i in range(self.nrows):
             for j in range(self.ncols):
@@ -114,13 +146,13 @@ class MainLayout(BoxLayout):
                                 self.btn_matrix[i+x][j].background_color[3] = 1
                                 #add the jewels to remove to a list
                                 self.e_list.append([i+x,j])
-
+        self.sort_e_list()
         self.play_label_score.text = 'Score: %d'%self.score
         #Check if the move is successful
         if init_score == self.score:
-            return False
+            self.is_finished = True
         else:
-            return True
+            self.is_finished = False
     def init_board(self):
         # possible colors of the Jewels in rgba coodinates
 
@@ -141,7 +173,7 @@ class MainLayout(BoxLayout):
             for j in range(self.ncols):
                 # text = '({},{})'.format(i,j))
                 self.btn_matrix[i][j] = Button(
-                    on_press=partial(self.button_action, i, j))
+                    on_press=partial(self.btn_thread, i, j))
 
                 self.btn_matrix[i][j].background_normal = ''
                 self.layout_gameboard.add_widget(self.btn_matrix[i][j])
