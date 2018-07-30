@@ -124,10 +124,9 @@ class MainLayout(BoxLayout):
         self.size_window(self.nrows,self.ncols)
         # 1. initialize and load tht board
         self.load_board()
-        self.update_gameboard()
         if self.timer_is_on:
             return
-        Clock.schedule_interval(self.time_cal, 0.1)  # x s刷新一次
+        # Clock.schedule_interval(self.time_cal, 0.1)  # x s刷新一次
         self.timer_is_on = True
     def time_cal(self, dt):
         self.time_passed += dt
@@ -167,24 +166,19 @@ class MainLayout(BoxLayout):
                 self.init_btn_color(i, j)
         return self.btn_matrix
     def init_btn_color(self, i, j):
-        used_bc = []
-        if i < 2:
-            pass
-        elif self.btn_matrix[i - 1][j].background_color == self.btn_matrix[i - 2][j].background_color:
-            used_bc.append(self.btn_matrix[i - 1][j].background_color)
-        if j < 2:
-            pass
-        elif self.btn_matrix[i][j - 1].background_color == self.btn_matrix[i][j - 2].background_color:
-            used_bc.append(self.btn_matrix[i][j - 1].background_color)
-        for bc in used_bc:
+        unused_bc = []
+        for bc in self.color_dict:
+            unused_bc.append(bc)
+        if i >=2 and  self.btn_matrix[i - 1][j].background_color == self.btn_matrix[i - 2][j].background_color:
+            unused_bc.remove(self.btn_matrix[i - 1][j].background_color)
+        if j >= 2 and self.btn_matrix[i][j - 1].background_color == self.btn_matrix[i][j - 2].background_color:
             try:
-                self.color_dict.remove(bc)
+                unused_bc.remove(self.btn_matrix[i][j -1].background_color)
             except:
                 pass
-        self.btn_matrix[i][j].background_color = self.color_dict[r(
-            0, len(self.color_dict) - 1)]
-        for bc in used_bc:
-            self.color_dict.append(bc)
+        self.btn_matrix[i][j].background_color = unused_bc[r(
+             0, len(unused_bc) - 1)]
+
 
     # size the window accoording to nrows and ncols
     def size_window(self,nrows,ncols):
@@ -263,7 +257,7 @@ class MainLayout(BoxLayout):
 
         # possible colors of the Jewels in rgba coodinates
         self.color_dict = []
-        self.btn_alpha = .7
+        self.btn_alpha = .4
         self.color_dict.append([1, 0, 0, self.btn_alpha])
         self.color_dict.append([0, 1, 0, self.btn_alpha])
         self.color_dict.append([0, 0, 1, self.btn_alpha])
