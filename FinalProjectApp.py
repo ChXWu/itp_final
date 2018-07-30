@@ -44,18 +44,18 @@ class MainLayout(BoxLayout):
         else:
             #print ("in Check status")
             #pprint(self.e_list)
-            Clock.schedule_once(self.eliminate_btns,.05)
-            Clock.schedule_once(self.drop_jewels,.1)
-            Clock.schedule_once(partial(self.check_board),.3)
+            Clock.schedule_once(partial(self.eliminate_btns),.05)
+            Clock.schedule_once(partial(self.drop_jewels),.1)
+            Clock.schedule_once(partial(self.check_board),.1 + .03 * self.nrows)
             Clock.schedule_once(partial(self.update_gameboard),.5)
-    def eliminate_btns(self,dt):
+    def eliminate_btns(self,*args):
         for btn in self.e_list:
             self.btn_matrix[btn[0]][btn[1]].background_color = [0,0,0,self.btn_alpha]
-    def drop_jewels(self,dt):
+    def drop_jewels(self,*args):
         start_time = 0
         # while len(self.e_list) > 0:
         for i in range(self.num_drop_level()):
-            Clock.schedule_once(self.drop_one_level,start_time)
+            Clock.schedule_once(partial(self.drop_one_level),start_time)
             #self.drop_one_level(dt)
             start_time += 0.03
         pprint (self.e_list)
@@ -69,7 +69,7 @@ class MainLayout(BoxLayout):
                 current = btn[0]
                 num_level += 1
         return num_level
-    def drop_one_level(self,dt):
+    def drop_one_level(self,*args):
         self.sort_e_list()
         pprint (self.e_list)
 
@@ -152,15 +152,6 @@ class MainLayout(BoxLayout):
         self.add_widget(self.play_lable_copyright)
         self.init_board()
     def init_board(self):
-        # possible colors of the Jewels in rgba coodinates
-        self.color_dict = []
-        self.btn_alpha = .4
-        self.color_dict.append([1, 0, 0, self.btn_alpha])
-        self.color_dict.append([0, 1, 0, self.btn_alpha])
-        self.color_dict.append([0, 0, 1, self.btn_alpha])
-        self.color_dict.append([1, 1, 0, self.btn_alpha])
-        self.color_dict.append([1, 0, 1, self.btn_alpha])
-        self.color_dict.append([0, 1, 1, self.btn_alpha])
         # initialize a matrix to record all the buttons
         self.btn_matrix = [
             [0 for j in range(self.ncols)] for i in range(self.nrows)]
@@ -269,6 +260,16 @@ class MainLayout(BoxLayout):
                     10, 10, 0, 0, 100]
         self.click_count = 0
         self.timer_is_on = False
+
+        # possible colors of the Jewels in rgba coodinates
+        self.color_dict = []
+        self.btn_alpha = .7
+        self.color_dict.append([1, 0, 0, self.btn_alpha])
+        self.color_dict.append([0, 1, 0, self.btn_alpha])
+        self.color_dict.append([0, 0, 1, self.btn_alpha])
+        self.color_dict.append([1, 1, 0, self.btn_alpha])
+        self.color_dict.append([1, 0, 1, self.btn_alpha])
+        self.color_dict.append([0, 1, 1, self.btn_alpha])
 
 class FinalProjectApp(App):
     def build(self):
