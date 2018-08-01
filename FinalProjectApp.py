@@ -46,8 +46,8 @@ class MainLayout(BoxLayout):
             #pprint(self.e_list)
             Clock.schedule_once(partial(self.eliminate_btns),.05)
             Clock.schedule_once(partial(self.drop_jewels),.1)
-            Clock.schedule_once(partial(self.check_board),.1 + .03 * self.nrows)
-            Clock.schedule_once(partial(self.update_gameboard),.5)
+            Clock.schedule_once(partial(self.check_board),.11 + .03 * self.nrows)
+            Clock.schedule_once(partial(self.update_gameboard),.15 + .03 * self.nrows)
     def eliminate_btns(self,*args):
         for btn in self.e_list:
             self.btn_matrix[btn[0]][btn[1]].background_color = [0,0,0,self.btn_alpha]
