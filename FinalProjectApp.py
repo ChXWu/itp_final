@@ -17,6 +17,10 @@ from pprint import pprint
 
 
 class MainLayout(BoxLayout):
+
+    #new functions
+    #def
+    #old functions
     def button_action(self, i, j, *largs):
         # print(len(self.e_list))
         if self.click_count % 2 == 0:
@@ -202,9 +206,7 @@ class MainLayout(BoxLayout):
     def return_to_menu(self, instance):
         self.clear_widgets()
         Window.size = (500, 300)
-        self.add_widget(self.menu_picture)
-        self.add_widget(self.menu_btn_start)
-        self.menu_btn_start.bind(on_press=self.start_game)
+        self.add_widget(self.menu_layout_main)
 
     def __init__(self, **kwargs):
         super(MainLayout, self).__init__(**kwargs)
@@ -230,10 +232,21 @@ class MainLayout(BoxLayout):
         self.play_btn_return = Button(text='Return to Menu',
                                       background_normal='', background_color=[0, 1, 0, .5], color=[0, 0, 0, .8])
 
-        self.menu_btn_start = Button(text='Start', size_hint_y=0.2)
+        self.menu_layout_main = BoxLayout(orientation = "vertical")
+        self.menu_layout_btn = BoxLayout(orientation = "horizontal",padding = 10, spacing = 10)
+        self.menu_btn_start = Button(text='Start', size_hint_y=.2)
+        self.menu_btn_start.bind(on_press=self.start_game)
+
+        self.menu_btn_option = Button(text = 'Options',size_hint_y =.2)
+        self.menu_layout_btn.add_widget(self.menu_btn_start)
+        self.menu_layout_btn.add_widget(self.menu_btn_option)
         self.menu_picture = Label(text='Picture goes here')
-        self.menu_textinput = TextInput(text='10')
-        self.menu_textinput2 = TextInput(text='10')
+        self.menu_layout_main.add_widget(self.menu_picture)
+        self.menu_layout_main.add_widget(self.menu_layout_btn)
+
+        self.option_textinput = TextInput(text='10')
+        self.option_textinput2 = TextInput(text='10')
+        #self menu_input
         self.play_layout_status.add_widget(self.play_label_score)
         self.play_layout_status.add_widget(self.play_label_time_passed)
         self.play_layout_status.add_widget(self.play_label_time_left)
@@ -244,8 +257,7 @@ class MainLayout(BoxLayout):
         self.play_btn_return.bind(on_press=self.return_to_menu)
         self.play_btn_startover.bind(on_press=self.start_game)
 
-        self.add_widget(self.menu_picture)
-        self.add_widget(self.menu_btn_start)
+        self.add_widget(self.menu_layout_main)
         self.menu_btn_start.bind(on_press=self.start_game)
 
         self.e_list = []
