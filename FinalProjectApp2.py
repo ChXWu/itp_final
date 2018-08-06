@@ -219,8 +219,6 @@ class MainLayout(BoxLayout):
         self.add_widget(self.menu_layout_main)
 
 
-
-
     def __init__(self, **kwargs):
         super(MainLayout, self).__init__(**kwargs)
         # 定义一些控件
