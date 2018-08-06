@@ -53,20 +53,16 @@ class MainLayout(BoxLayout):
                     self.update_gameboard()
         self.click_count += 1
 
-
-
-
-
     def update_gameboard(self,*args):
         if self.is_finished:
             return
         else:
             #print ("in Check status")
             #pprint(self.e_list)
-            Clock.schedule_once(partial(self.eliminate_btns),.05)
-            Clock.schedule_once(partial(self.drop_jewels),.1)
-            Clock.schedule_once(partial(self.check_board),.11 + .03 * self.nrows)
-            Clock.schedule_once(partial(self.update_gameboard),.15 + .03 * self.nrows)
+            Clock.schedule_once(partial(self.eliminate_btns),.1)
+            Clock.schedule_once(partial(self.drop_jewels),.2)
+            Clock.schedule_once(partial(self.check_board),.2 + .06 * self.nrows)
+            Clock.schedule_once(partial(self.update_gameboard),.3 + .06 * self.nrows)
     def eliminate_btns(self,*args):
         for btn in self.e_list:
             self.btn_matrix[btn[0]][btn[1]].background_color = [0,0,0,self.btn_alpha]
@@ -76,7 +72,7 @@ class MainLayout(BoxLayout):
         for i in range(self.num_drop_level()):
             Clock.schedule_once(partial(self.drop_one_level),start_time)
             #self.drop_one_level(dt)
-            start_time += 0.03
+            start_time += 0.06
         pprint (self.e_list)
     def num_drop_level(self):
         num_level = 0
@@ -184,9 +180,6 @@ class MainLayout(BoxLayout):
                 self.layout_gameboard.add_widget(self.btn_matrix[i][j])
                 self.init_btn_color(i, j)
         return self.btn_matrix
-
-
-
     def init_btn_color(self, i, j):
         unused_bc = []
         for bc in self.color_dict:
@@ -222,7 +215,9 @@ class MainLayout(BoxLayout):
     def return_to_menu(self, instance):
         self.clear_widgets()
         Window.size = (500, 300)
+        self.add_widget(AsyncImage(source='back.png',size_hint= (2, 3),pos_hint={'center_x':.5, 'center_y':.5}))
         self.add_widget(self.menu_layout_main)
+
 
 
 
@@ -266,7 +261,7 @@ class MainLayout(BoxLayout):
         self.menu_layout_btn.add_widget(self.menu_btn_start)
         self.menu_layout_btn.add_widget(self.menu_btn_option)
         self.menu_picture = Label(text='Picture goes here')
-# add pic
+        # add pic
         self.add_widget(AsyncImage(source='back.png',size_hint= (2, 3),pos_hint={'center_x':.5, 'center_y':.5}))
         self.menu_layout_main.add_widget(self.menu_layout_btn)
 
