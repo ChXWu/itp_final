@@ -17,8 +17,9 @@ import numpy as np
 from pprint import pprint
 from kivy.uix.image import AsyncImage
 
-class MainLayout(BoxLayout):
 
+
+class MainLayout(BoxLayout):
     #new functions
     def open_options(self,instance):
         self.clear_widgets()
@@ -29,7 +30,6 @@ class MainLayout(BoxLayout):
         self.ncols = int(self.option_ui_ncols.text)
         self.ncolors = int(self.option_ui_color.text)
         self.color_dict = self.color_bank[:self.ncolors]
-
     #old functions
     def button_action(self, i, j, *largs):
         # print(len(self.e_list))
@@ -52,13 +52,10 @@ class MainLayout(BoxLayout):
                 else:
                     self.update_gameboard()
         self.click_count += 1
-
     def update_gameboard(self,*args):
         if self.is_finished:
             return
         else:
-            #print ("in Check status")
-            #pprint(self.e_list)
             Clock.schedule_once(partial(self.eliminate_btns),.1)
             Clock.schedule_once(partial(self.drop_jewels),.2)
             Clock.schedule_once(partial(self.check_board),.2 + .06 * self.nrows)
@@ -73,7 +70,7 @@ class MainLayout(BoxLayout):
             Clock.schedule_once(partial(self.drop_one_level),start_time)
             #self.drop_one_level(dt)
             start_time += 0.06
-        pprint (self.e_list)
+        #pprint (self.e_list)
     def num_drop_level(self):
         num_level = 0
         current = self.e_list
@@ -86,7 +83,7 @@ class MainLayout(BoxLayout):
         return num_level
     def drop_one_level(self,*args):
         self.sort_e_list()
-        pprint (self.e_list)
+        #pprint (self.e_list)
 
         if len(self.e_list) == 0:
             return
@@ -141,7 +138,7 @@ class MainLayout(BoxLayout):
         self.load_board()
         if self.timer_is_on:
             return
-        # Clock.schedule_interval(self.time_cal, 0.1)  # x s刷新一次
+        Clock.schedule_interval(self.time_cal, 0.1)  # x s刷新一次
         self.timer_is_on = True
     def time_cal(self, dt):
         self.time_passed += dt
@@ -199,7 +196,7 @@ class MainLayout(BoxLayout):
         jewel_size = 40
         padding = 10
         x = (jewel_size + padding) * ncols + padding
-        y = x / 0.8
+        y = ((jewel_size + padding) * nrows + padding) + 125
         Window.size = (x, y)
         return [x,y]
     def sort_e_list(self):
@@ -214,10 +211,8 @@ class MainLayout(BoxLayout):
         self.click_count = 0
     def return_to_menu(self, instance):
         self.clear_widgets()
-        Window.size = (500, 300)
-        self.add_widget(AsyncImage(source='back.png',size_hint= (2, 3),pos_hint={'center_x':.5, 'center_y':.5}))
+        Window.size = (500, 600)
         self.add_widget(self.menu_layout_main)
-
 
     def __init__(self, **kwargs):
         super(MainLayout, self).__init__(**kwargs)
@@ -229,92 +224,6 @@ class MainLayout(BoxLayout):
         self.click_count = 0
         self.timer_is_on = False
         self.ncolors = 6
-        self.play_label_title = Label(
-            text='Eliminates the Jewels', size_hint_y=.1, font_size='25sp')
-        # layout for the status section
-        self.play_layout_status = BoxLayout(
-            orientation='horizontal', size_hint_y=.05, spacing=10)
-        self.play_layout_btn = BoxLayout(
-            orientation='horizontal', size_hint_y=.05, spacing=5, padding=5)
-        self.play_label_score = Label(text='Score: %d'%self.score)
-        self.play_label_time_passed = Label(
-            text='Time Passed: %.1f' % self.time_passed)
-        self.play_label_time_left = Label(
-            text='Time Left: %.1f' % self.time_left)
-        self.play_lable_copyright = Label(
-            text='Made by Changxuan Wu and Shuyang Deng in 2018',
-            size_hint_y=.05)
-        self.play_btn_startover = Button(text='Start Over',
-                                         background_normal='', background_color=[1, 0, 0, .5], color=[0, 0, 0, 1])
-        self.play_btn_return = Button(text='Return to Menu',
-                                      background_normal='', background_color=[0, 1, 0, .5], color=[0, 0, 0, .8])
-
-
-        self.menu_layout_main = BoxLayout(orientation = "vertical")
-        self.menu_layout_btn = BoxLayout(orientation = "horizontal",padding = 10, spacing = 10,size_hint_y =.2)
-        self.menu_btn_start = Button(text='Start')
-        self.menu_btn_start.bind(on_press=self.start_game)
-        self.menu_btn_option = Button(text = 'Options')
-        self.menu_btn_option.bind(on_press=self.open_options)
-        self.menu_layout_btn.add_widget(self.menu_btn_start)
-        self.menu_layout_btn.add_widget(self.menu_btn_option)
-        self.menu_picture = Label(text='Picture goes here')
-        # add pic
-        self.add_widget(AsyncImage(source='back.png',size_hint= (2, 3),pos_hint={'center_x':.5, 'center_y':.5}))
-        self.menu_layout_main.add_widget(self.menu_layout_btn)
-
-        self.sound = SoundLoader.load('bingo.mp3')
-        self.bingo = SoundLoader.load('bingo.mp3')
-        self.first_button = None
-        self.second_button = None
-
-        self.option_layout_main = BoxLayout(orientation = "vertical")
-        self.option_layout_main.add_widget(Label(text = "Options", size_hint_y=1, font_size='25sp'))
-
-        self.option_layout_nrow = BoxLayout(orientation = "horizontal",size_hint_y=1,padding = 25,spacing = 20)
-        self.option_layout_nrow.add_widget(Label(text = "Number of Rows"))
-        self.option_ui_nrows = TextInput(text=str(self.nrows), size_hint_x = .5,multiline = False)
-        self.option_layout_nrow.add_widget(self.option_ui_nrows)
-
-        self.option_layout_ncol = BoxLayout(orientation = "horizontal",size_hint_y=1,padding = 25,spacing = 20)
-        self.option_layout_ncol.add_widget(Label(text = "Number of Columns"))
-        self.option_ui_ncols = TextInput(text=str(self.ncols), size_hint_x = .5,multiline = False)
-        self.option_layout_ncol.add_widget(self.option_ui_ncols)
-
-        self.option_layout_color = BoxLayout(orientation = "horizontal",size_hint_y=1,padding = 25,spacing = 20)
-        self.option_layout_color.add_widget(Label(text = "Number of Colors"))
-        self.option_ui_color = TextInput(text=str(self.ncolors), size_hint_x = .5,multiline = False)
-        self.option_layout_color.add_widget(self.option_ui_color)
-
-        self.option_layout_btn = BoxLayout(orientation = "horizontal",spacing = 15,padding = 15)
-        self.option_btn_confirm = Button(text = "Confrim")
-        self.option_layout_btn.add_widget(self.option_btn_confirm)
-        self.option_btn_confirm.bind(on_press= self.confirm_change)
-        self.option_btn_return  = Button(text = "Return")
-        self.option_btn_return.bind(on_press=self.return_to_menu)
-        self.option_layout_btn.add_widget(self.option_btn_return)
-
-        self.option_textinput2 = TextInput(text='10')
-        self.option_layout_main.add_widget(self.option_layout_nrow)
-        self.option_layout_main.add_widget(self.option_layout_ncol)
-        self.option_layout_main.add_widget(self.option_layout_color)
-        self.option_layout_main.add_widget(self.option_layout_btn)
-
-
-
-        #self menu_input
-        self.play_layout_status.add_widget(self.play_label_score)
-        self.play_layout_status.add_widget(self.play_label_time_passed)
-        self.play_layout_status.add_widget(self.play_label_time_left)
-
-        self.play_layout_btn.add_widget(self.play_btn_return)
-        self.play_layout_btn.add_widget(self.play_btn_startover)
-
-        self.play_btn_return.bind(on_press=self.return_to_menu)
-        self.play_btn_startover.bind(on_press=self.start_game)
-
-        self.add_widget(self.menu_layout_main)
-
 
         # possible colors of the Jewels in rgba coodinates
         self.color_bank = []
@@ -325,10 +234,95 @@ class MainLayout(BoxLayout):
         self.color_bank.append([1, 0.65, 0, self.btn_alpha])
         self.color_bank.append([0.85, 0.44, 0.84, self.btn_alpha])
         self.color_bank.append([0.68, 1, 0.18, self.btn_alpha])
-
         self.color_dict = self.color_bank[:self.ncolors]
+
+        self.play_label_title = Label(
+            text='Eliminates the Jewels', size_hint_y = None, height = 25, font_size='25sp')
+        self.play_layout_btn = BoxLayout(
+            orientation='horizontal', size_hint_y = None, height = 45, spacing=5, padding=5)
+        self.play_btn_return = Button(text='Return to Menu',
+                                      background_normal='', background_color=[0, 1, 0, .5], color=[0, 0, 0, .8])
+        self.play_btn_return.bind(on_press=self.return_to_menu)
+        self.play_btn_startover = Button(text='Start Over',
+                                         background_normal='', background_color=[1, 0, 0, .5], color=[0, 0, 0, 1])
+        self.play_btn_startover.bind(on_press=self.start_game)
+        self.play_layout_btn.add_widget(self.play_btn_return)
+        self.play_layout_btn.add_widget(self.play_btn_startover)
+        # layout for the status section
+        self.play_layout_status = BoxLayout(
+            orientation='horizontal', size_hint_y = None, height = 20, spacing=10)
+        #self.play_layout_status = StackLayout(
+        self.play_label_score = Label(text='Score: %d'%self.score)
+        self.play_label_time_passed = Label(
+            text='Time Passed: %.1f' % self.time_passed)
+        self.play_label_time_left = Label(
+            text='Time Left: %.1f' % self.time_left)
+        #self menu_input
+        self.play_layout_status.add_widget(self.play_label_score)
+        self.play_layout_status.add_widget(self.play_label_time_passed)
+        self.play_layout_status.add_widget(self.play_label_time_left)
+        self.play_lable_copyright = Label(
+            text='Made by Changxuan Wu and Shuyang Deng in 2018',
+            size_hint_y = None, height = 30)
+
+        self.menu_layout_main = BoxLayout(orientation = "vertical")
+        self.menu_picture = AsyncImage(source='back.png',size_hint= (2, 3),pos_hint={'center_x':.5, 'center_y':.5})
+        self.menu_layout_btn = BoxLayout(orientation = "horizontal",padding = 10, spacing = 10,size_hint_y =None,height = 100)
+        self.menu_btn_start = Button(text='Start')
+        self.menu_btn_start.bind(on_press=self.start_game)
+        self.menu_btn_option = Button(text = 'Options')
+        self.menu_btn_option.bind(on_press=self.open_options)
+        self.menu_layout_btn.add_widget(self.menu_btn_start)
+        self.menu_layout_btn.add_widget(self.menu_btn_option)
+
+        self.menu_layout_main.add_widget(self.menu_picture)
+        self.menu_layout_main.add_widget(self.menu_layout_btn)
+        self.add_widget(self.menu_layout_main)
+
+        self.option_layout_main = BoxLayout(orientation = "vertical")
+
+        self.option_layout_nrow = BoxLayout(orientation = "horizontal",size_hint_y=1,padding = 25,spacing = 20)
+        self.option_ui_nrows = TextInput(text=str(self.nrows), size_hint_x = .5,multiline = False)
+        self.option_layout_nrow.add_widget(Label(text = "Number of Rows"))
+        self.option_layout_nrow.add_widget(self.option_ui_nrows)
+
+        self.option_layout_ncol = BoxLayout(orientation = "horizontal",size_hint_y=1,padding = 25,spacing = 20)
+        self.option_ui_ncols = TextInput(text=str(self.ncols), size_hint_x = .5,multiline = False)
+        self.option_layout_ncol.add_widget(Label(text = "Number of Columns"))
+        self.option_layout_ncol.add_widget(self.option_ui_ncols)
+
+        self.option_layout_color = BoxLayout(orientation = "horizontal",size_hint_y=1,padding = 25,spacing = 20)
+        self.option_ui_color = TextInput(text=str(self.ncolors), size_hint_x = .5,multiline = False)
+        self.option_layout_color.add_widget(Label(text = "Number of Colors"))
+        self.option_layout_color.add_widget(self.option_ui_color)
+
+        self.option_layout_btn = BoxLayout(orientation = "horizontal",spacing = 15,padding = 15)
+        self.option_btn_confirm = Button(text = "Confrim")
+        self.option_layout_btn.add_widget(self.option_btn_confirm)
+        self.option_btn_confirm.bind(on_press= self.confirm_change)
+        self.option_btn_return  = Button(text = "Return")
+        self.option_btn_return.bind(on_press=self.return_to_menu)
+        self.option_layout_btn.add_widget(self.option_btn_return)
+
+        self.option_layout_main.add_widget(Label(text = "Options", size_hint_y=1, font_size='25sp'))
+        self.option_layout_main.add_widget(self.option_layout_nrow)
+        self.option_layout_main.add_widget(self.option_layout_ncol)
+        self.option_layout_main.add_widget(self.option_layout_color)
+        self.option_layout_main.add_widget(self.option_layout_btn)
+
+
+
+        self.sound = SoundLoader.load('bingo.mp3')
+        self.bingo = SoundLoader.load('bingo.mp3')
+        self.first_button = None
+        self.second_button = None
+
+
 class FinalProjectApp(App):
     def build(self):
+        Config.set('graphics', 'width', '500')
+        Config.set('graphics', 'height', '300')
+        Config.write()
         # main layout of the game when user is playing
         root = MainLayout(orientation='vertical')
         return root
