@@ -158,7 +158,7 @@ class MainLayout(BoxLayout):
         self.add_widget(self.play_layout_status)
         # add the gameboard to the main layout
         self.layout_gameboard = GridLayout(
-            padding=10, spacing=10, cols=self.ncols, rows=self.nrows,size_hint_y = .8)
+            padding=10, spacing=10, cols=self.ncols, rows=self.nrows)
         self.add_widget(self.layout_gameboard)
         self.add_widget(self.play_lable_copyright)
         self.init_board()
