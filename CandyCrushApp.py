@@ -318,7 +318,7 @@ class MainLayout(BoxLayout):
         self.second_button = None
 
 
-class FinalProjectApp(App):
+class CandyCrushApp(App):
     def build(self):
         Config.set('graphics', 'width', '500')
         Config.set('graphics', 'height', '600')
@@ -329,4 +329,4 @@ class FinalProjectApp(App):
 
 
 if __name__ == '__main__':
-    FinalProjectApp().run()
+    CandyCrushApp().run()
