@@ -104,7 +104,7 @@ class MainLayout(BoxLayout):
         init_score = self.score
         for i in range(self.nrows):
             for j in range(self.ncols):
-                if j+2 < self.nrows:
+                if j+2 < self.ncols:
                     if self.btn_matrix[i][j].background_color[:3] == self.btn_matrix[i][j+1].background_color[:3]:
                         if self.btn_matrix[i][j].background_color[:3] == self.btn_matrix[i][j+2].background_color[:3]:
                             self.score += 3
@@ -112,7 +112,7 @@ class MainLayout(BoxLayout):
                                 self.btn_matrix[i][j+x].background_color[3] = 1
                                 #add the jewels to remove to a list
                                 self.e_list.append([i,j+x])
-                if i+2 < self.ncols:
+                if i+2 < self.nrows:
                     if self.btn_matrix[i][j].background_color[:3] == self.btn_matrix[i+1][j].background_color[:3]:
                         if self.btn_matrix[i][j].background_color[:3] == self.btn_matrix[i+2][j].background_color[:3]:
                             self.score += 3
@@ -321,7 +321,7 @@ class MainLayout(BoxLayout):
 class FinalProjectApp(App):
     def build(self):
         Config.set('graphics', 'width', '500')
-        Config.set('graphics', 'height', '300')
+        Config.set('graphics', 'height', '600')
         Config.write()
         # main layout of the game when user is playing
         root = MainLayout(orientation='vertical')
