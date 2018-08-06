@@ -158,7 +158,7 @@ class MainLayout(BoxLayout):
         self.add_widget(self.play_layout_status)
         # add the gameboard to the main layout
         self.layout_gameboard = GridLayout(
-            padding=10, spacing=10, cols=self.ncols, rows=self.nrows,size_hint_y = .8)
+            padding=10, spacing=10, cols=self.ncols, rows=self.nrows)
         self.add_widget(self.layout_gameboard)
         self.add_widget(self.play_lable_copyright)
         self.init_board()
@@ -207,7 +207,7 @@ class MainLayout(BoxLayout):
         self.btn_matrix[btn2[0]][btn2[1]].background_color = temp_button_color
 
     def restart_set(self):
-        self.score, self.time_passed, self.time_left = [0, 0, 100]
+        self.score, self.time_passed, self.time_left = [0, 0, 60]
         self.click_count = 0
     def return_to_menu(self, instance):
         self.clear_widgets()
@@ -220,7 +220,7 @@ class MainLayout(BoxLayout):
         self.e_list = []
         self.is_finished = True
         self.ncols, self.nrows, self.score, self.time_passed, self.time_left = [
-                    10, 10, 0, 0, 100]
+                    10, 10, 0, 0, 60]
         self.click_count = 0
         self.timer_is_on = False
         self.ncolors = 6
